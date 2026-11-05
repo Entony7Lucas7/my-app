@@ -1,4 +1,3 @@
-
 import {
   ScrollView,
   StyleSheet,
@@ -9,8 +8,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors, radius, spacing } from "../../constants/theme";
+import { getCurrentPlayer } from "../../features/player/services/playerService";
 
 export default function ProfileScreen() {
+  const player = getCurrentPlayer();
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -21,15 +23,17 @@ export default function ProfileScreen() {
 
         <View style={styles.profileHeader}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>A</Text>
+            <Text style={styles.avatarText}>
+              {player.name.charAt(0).toUpperCase()}
+            </Text>
           </View>
 
           <Text style={styles.name}>
-            Aventureiro
+            {player.name}
           </Text>
 
           <Text style={styles.level}>
-            Nível 3 • Aprendiz
+            Nível {player.level} • Aprendiz
           </Text>
         </View>
 
@@ -44,28 +48,40 @@ export default function ProfileScreen() {
             <Text style={styles.label}>
               Experiência total
             </Text>
-            <Text style={styles.value}>240 XP</Text>
+
+            <Text style={styles.value}>
+              {player.xp} XP
+            </Text>
           </View>
 
           <View style={styles.statRow}>
             <Text style={styles.label}>
               Dias de sequência
             </Text>
-            <Text style={styles.value}>5 dias</Text>
+
+            <Text style={styles.value}>
+              {player.streak} dias
+            </Text>
           </View>
 
           <View style={styles.statRow}>
             <Text style={styles.label}>
               Exercícios concluídos
             </Text>
-            <Text style={styles.value}>12</Text>
+
+            <Text style={styles.value}>
+              {player.completedExercises}
+            </Text>
           </View>
 
           <View style={[styles.statRow, styles.lastStatRow]}>
             <Text style={styles.label}>
               Cursos em andamento
             </Text>
-            <Text style={styles.value}>1</Text>
+
+            <Text style={styles.value}>
+              1
+            </Text>
           </View>
         </View>
 
@@ -108,7 +124,6 @@ export default function ProfileScreen() {
             </View>
           </View>
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );

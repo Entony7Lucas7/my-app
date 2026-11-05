@@ -1,42 +1,48 @@
+import { useRouter } from "expo-router";
+
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors, radius, spacing } from "../../constants/theme";
 
-const courses = [
-  {
-    id: 1,
-    title: "Fundamentos de Python",
-    description: "Aprenda variáveis, condições, repetições e funções.",
-    difficulty: "Iniciante",
-    progress: "50%",
-    status: "Em andamento",
-  },
-  {
-    id: 2,
-    title: "Lógica de Programação",
-    description: "Desenvolva seu raciocínio e resolva problemas.",
-    difficulty: "Iniciante",
-    progress: "0%",
-    status: "Disponível",
-  },
-  {
-    id: 3,
-    title: "Estruturas de Dados",
-    description: "Conheça listas, tuplas, dicionários e conjuntos.",
-    difficulty: "Intermediário",
-    progress: "0%",
-    status: "Bloqueado",
-  },
-];
+import { getCourses } from "../../features/courses/services/courseService";
+
+import type {
+  CourseDifficulty,
+  CourseStatus,
+} from "../../features/courses/types/course";
+
+const difficultyLabels: Record<CourseDifficulty, string> = {
+  beginner: "Iniciante",
+  intermediate: "Intermediário",
+  advanced: "Avançado",
+};
+
+const statusLabels: Record<CourseStatus, string> = {
+  available: "Disponível",
+  in_progress: "Em andamento",
+  completed: "Concluído",
+  locked: "Bloqueado",
+};
 
 export default function TrailsScreen() {
+  const router = useRouter();
+  const courses = getCourses();
+
+  function openCourse(courseId: string) {
+    router.push({
+      pathname: "/courses/[courseId]",
+      params: { courseId },
+    });
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -49,9 +55,18 @@ export default function TrailsScreen() {
         </Text>
 
         {courses.map((course) => (
-          <View key={course.id} style={styles.card}>
+          <Pressable
+            key={course.id}
+            style={({ pressed }) => [
+              styles.card,
+              pressed && styles.cardPressed,
+            ]}
+            onPress={() => openCourse(course.id)}
+            accessibilityRole="button"
+            accessibilityLabel={`Abrir curso ${course.title}`}
+          >
             <Text style={styles.difficulty}>
-              {course.difficulty}
+              {difficultyLabels[course.difficulty]}
             </Text>
 
             <Text style={styles.courseTitle}>
@@ -64,19 +79,20 @@ export default function TrailsScreen() {
 
             <View style={styles.footer}>
               <Text style={styles.progress}>
-                Progresso: {course.progress}
+                Progresso: {course.progress}%
               </Text>
 
               <Text
                 style={[
                   styles.status,
-                  course.status === "Bloqueado" && styles.locked,
+                  course.status === "locked" && styles.locked,
+                  course.status === "completed" && styles.completed,
                 ]}
               >
-                {course.status}
+                {statusLabels[course.status]}
               </Text>
             </View>
-          </View>
+          </Pressable>
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -112,6 +128,10 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     borderRadius: radius.lg,
     marginBottom: spacing.md,
+  },
+
+  cardPressed: {
+    opacity: 0.8,
   },
 
   difficulty: {
@@ -154,5 +174,9 @@ const styles = StyleSheet.create({
 
   locked: {
     color: colors.danger,
+  },
+
+  completed: {
+    color: colors.success,
   },
 });

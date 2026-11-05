@@ -1,5 +1,5 @@
-
 import { useRouter } from "expo-router";
+
 import {
   Pressable,
   ScrollView,
@@ -7,23 +7,16 @@ import {
   Text,
   View,
 } from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors, radius, spacing } from "../../constants/theme";
+import { getCurrentPlayer } from "../../features/player/services/playerService";
 
 // ==========================================
 // DADOS DEMONSTRATIVOS
 // Futuramente serão substituídos pela API.
 // ==========================================
-
-const player = {
-  name: "Aventureiro",
-  level: 3,
-  xp: 240,
-  nextLevelXp: 400,
-  streak: 5,
-  completedExercises: 12,
-};
 
 const course = {
   title: "Fundamentos de Python",
@@ -94,6 +87,7 @@ function SectionTitle({ children }: SectionTitleProps) {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const player = getCurrentPlayer();
 
   const levelProgress = Math.min(
     100,

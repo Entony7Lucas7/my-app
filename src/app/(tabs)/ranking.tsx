@@ -1,23 +1,23 @@
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors, radius, spacing } from "../../constants/theme";
 
-const players = [
-  { id: 1, name: "Mestre do Código", xp: 1850 },
-  { id: 2, name: "Programador Sombrio", xp: 1420 },
-  { id: 3, name: "Aventureiro", xp: 240 },
-  { id: 4, name: "Aprendiz Arcano", xp: 180 },
-  { id: 5, name: "Guardião da Lógica", xp: 120 },
-];
+import {
+  getCurrentPlayer,
+  getRanking,
+} from "../../features/player/services/playerService";
 
 export default function RankingScreen() {
+  const currentPlayer = getCurrentPlayer();
+  const players = getRanking();
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -29,16 +29,16 @@ export default function RankingScreen() {
           Os aventureiros mais dedicados da jornada.
         </Text>
 
-        {players.map((player, index) => (
+        {players.map((player) => (
           <View
             key={player.id}
             style={[
               styles.playerCard,
-              player.name === "Aventureiro" && styles.currentPlayer,
+              player.id === currentPlayer.id && styles.currentPlayer,
             ]}
           >
             <Text style={styles.position}>
-              #{index + 1}
+              #{player.position}
             </Text>
 
             <View style={styles.playerInfo}>
